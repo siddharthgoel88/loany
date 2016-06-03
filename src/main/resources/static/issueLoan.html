@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Issue Loan</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+</head>
+<body>
+	<div class="container">
+		<h1 class="display-4">Issue Loan</h1>
+		<form>
+		  <div class="row">
+		  <div class="col-xs-2">
+		    <label for="borrowerName">Amount (Rs.) : </label>
+		    <input type="text" class="form-control" id="amount" placeholder="Enter loan amount here">
+		  </div>
+		  <div class="col-xs-3">
+		    <label for="itemName">Item Name : </label>
+		    <input type="text" class="form-control" id="itemName" placeholder="Enter item name here">
+		  </div>
+		  <div class="col-xs-4">
+		    <label for="itemWeight">Item Weight : </label>
+		    <input type="text" class="form-control" id="amount" placeholder="Enter item weight here">
+		  </div>
+		  </div>
+		  <div class="row">
+		  <div class="col-xs-2">
+		    <label for="loanIssueDate">Loan Issue Date : </label>
+		    <input type="text" class="form-control" id="loanIssueDate" placeholder="Click here and select the date">
+		  </div>
+		  <div class="col-xs-3">
+		    <label for="loanDateHindi">Loan Date Hindi : </label>
+		    <input type="text" class="form-control" id="loanDateHindi" placeholder="Enter hindi date here">
+		  </div>
+		  <div class="col-xs-4">
+		    <label for="loanReturnDate">Loan Return Date : </label>
+		    <input type="text" class="form-control" id="loanReturnDate" placeholder="Click here and select the date">
+		  </div>
+		  </div>
+		  <div class="row">
+		  <div class="col-xs-2">
+		    <label for="interestRate">Rate of Interest (%) : </label>
+		    <input type="text" class="form-control" id="interestRate" placeholder="Enter rate of interest here">
+		  </div>
+		  <div class="col-xs-3">
+		    <label for="interestAmount">Interest Amount (Rs.) : </label>
+		    <input type="text" class="form-control" id="interestAmount" placeholder="Interest Amount">
+		  </div>
+		  </div>
+		  <div class="row"><br>
+		  <center>
+		  	<button type="submit" class="btn btn-primary">Calculate Interest</button>
+		  	<button type="submit" class="btn btn-primary">Issue Loan</button>
+		  </center>
+		  </div>
+		</form>
+	</div>
+	<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+	<script src="bootstrap/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js" ></script>
+	<script type="text/javascript">
+       $(function () {
+           $('#loanIssueDate').datepicker();
+           $('#loanReturnDate').datepicker();
+       });
+     </script>
+</body>
+</html>

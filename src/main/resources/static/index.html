@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Loany</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
+</head>
+<body>
+
+<div class="container">
+	<ul class="nav nav-tabs">
+	  <li class="nav-item">
+	    <a class="nav-link active" href="#allLoanView">Active</a>
+	  </li>
+	  <li class="nav-item">
+	    <a class="nav-link" href="#allUserView">Active</a>
+	  </li>
+	  <li class="nav-item">
+	    <a class="nav-link" href="#">Active</a>
+	  </li>
+	</ul>
+	<div class="tab-content">
+		<div id="allLoanView" class="tab-pane fade in active">
+			<table id="all-loan" class="display" cellspacing="0" width="100%">
+			    <thead>
+				    <tr>
+				        <th>Borrower's ID</th>
+				        <th>Borrower's Name</th>
+				        <th>Father's Name</th>
+				        <th>Place</th>
+				        <th>Caste</th>
+				        <th>Amount</th>
+				        <th>Loan Issue Date</th>
+				        <th>Loan Issue Date(Hindi)</th>
+				        <th>Loan Return Date</th>
+				        <th>Rate of Interest</th>
+				        <th>Interest Amount</th>
+				        <th>Total Amount</th>
+				        <th>Return Loan</th>
+				    </tr>
+			    </thead>
+			    <tfoot>
+				    <tr>
+				        <th>Borrower's ID</th>
+				        <th>Borrower's Name</th>
+				        <th>Father's Name</th>
+				        <th>Place</th>
+				        <th>Caste</th>
+				        <th>Amount</th>
+				        <th>Loan Issue Date</th>
+				        <th>Loan Issue Date(Hindi)</th>
+				        <th>Loan Return Date</th>
+				        <th>Rate of Interest</th>
+				        <th>Interest Amount</th>
+				        <th>Total Amount</th>
+				        <th>Return Loan</th>
+				    </tr>
+			    </tfoot>
+			</table>
+		</div>
+		<div id="allUserView" class="tab-pane fade">
+			<p>Hello</p>
+		</div>
+	</div>
+</div>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<script src="bootstrap/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js" ></script>
+<script>
+    $(document).ready(function() {
+    	var response = {};
+	    $.ajax({
+	    	url:  "/getAllLoans", 
+	    	success: function(result){
+	    	response = result;
+	    	for (var i=0; i<response.data.length; i++) {
+	    		response.data[i]['returnLoan'] = '<a href="' +  + '">Return Loan</a>';
+	    	}
+        $('#all-loan').DataTable( {
+            "aaData" : response.data,
+            "columns": [
+                { "data": "borrower.borrowerId" },
+                { "data": "borrower.borrowerName" },
+                { "data": "borrower.fatherName" },
+                { "data": "borrower.place" },
+                { "data": "borrower.caste" },
+                { "data": "amount" },
+                { "data": "loanIssueDate" },
+                { "data": "loanDateHindi" },
+                { "data": "loanReturnDate" },
+                { "data": "interestRate" },
+                { "data": "interestAmount" },
+                { "data": "totalAmount" },
+                { "data" : "returnLoan"}
+            ]
+        } );
+     }});
+    } );
+</script>
+</body>
+</html>
