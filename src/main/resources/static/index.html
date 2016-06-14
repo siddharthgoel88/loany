@@ -12,59 +12,45 @@
 <body>
 
 <div class="container">
-	<ul class="nav nav-tabs">
-	  <li class="nav-item">
-	    <a class="nav-link active" href="#allLoanView">Active</a>
-	  </li>
-	  <li class="nav-item">
-	    <a class="nav-link" href="#allUserView">Active</a>
-	  </li>
-	  <li class="nav-item">
-	    <a class="nav-link" href="#">Active</a>
-	  </li>
-	</ul>
-	<div class="tab-content">
-		<div id="allLoanView" class="tab-pane fade in active">
-			<table id="all-loan" class="display" cellspacing="0" width="100%">
-			    <thead>
-				    <tr>
-				        <th>Borrower's ID</th>
-				        <th>Borrower's Name</th>
-				        <th>Father's Name</th>
-				        <th>Place</th>
-				        <th>Caste</th>
-				        <th>Amount</th>
-				        <th>Loan Issue Date</th>
-				        <th>Loan Issue Date(Hindi)</th>
-				        <th>Loan Return Date</th>
-				        <th>Rate of Interest</th>
-				        <th>Interest Amount</th>
-				        <th>Total Amount</th>
-				        <th>Return Loan</th>
-				    </tr>
-			    </thead>
-			    <tfoot>
-				    <tr>
-				        <th>Borrower's ID</th>
-				        <th>Borrower's Name</th>
-				        <th>Father's Name</th>
-				        <th>Place</th>
-				        <th>Caste</th>
-				        <th>Amount</th>
-				        <th>Loan Issue Date</th>
-				        <th>Loan Issue Date(Hindi)</th>
-				        <th>Loan Return Date</th>
-				        <th>Rate of Interest</th>
-				        <th>Interest Amount</th>
-				        <th>Total Amount</th>
-				        <th>Return Loan</th>
-				    </tr>
-			    </tfoot>
-			</table>
-		</div>
-		<div id="allUserView" class="tab-pane fade">
-			<p>Hello</p>
-		</div>
+	<div id="allLoanView" class="tab-pane fade in active">
+		<h2 class="display-4">Loany</h2>
+		
+		<table id="all-loan" class="display" cellspacing="0" width="100%">
+		    <thead>
+			    <tr>
+			        <th>ID</th>
+			        <th>Name</th>
+			        <th>Father's Name</th>
+			        <th>Place</th>
+			        <th>Caste</th>
+			        <th>Amount</th>
+			        <th>Loan Issue Date</th>
+			        <th>Loan Issue Date(Hindi)</th>
+			        <th>Loan Return Date</th>
+			        <th>Rate of Interest</th>
+			        <th>Interest Amount</th>
+			        <th>Total Amount</th>
+			        <th>Action</th>
+			    </tr>
+		    </thead>
+		    <tfoot>
+			    <tr>
+			        <th>ID</th>
+			        <th>Name</th>
+			        <th>Father's Name</th>
+			        <th>Place</th>
+			        <th>Caste</th>
+			        <th>Amount</th>
+			        <th>Loan Issue Date</th>
+			        <th>Loan Issue Date(Hindi)</th>
+			        <th>Loan Return Date</th>
+			        <th>Rate of Interest</th>
+			        <th>Interest Amount</th>
+			        <th>Total Amount</th>
+			        <th>Action</th>
+			    </tr>
+		    </tfoot>
+		</table>
 	</div>
 </div>
 <script src="js/jquery/jquery-2.2.4.min.js"></script>
@@ -78,8 +64,27 @@
 	    	url:  "/getAllLoans", 
 	    	success: function(result){
 	    	response = result;
+	    	
 	    	for (var i=0; i<response.data.length; i++) {
-	    		response.data[i]['returnLoan'] = '<a href="' +  + '">Return Loan</a>';
+	    		response.data[i]['loanIssueDate'] = formatDate(response.data[i]['loanIssueDate']);
+	    		response.data[i]['loanReturnDate'] = formatDate(response.data[i]['loanReturnDate']);
+	    		response.data[i]['borrower']['borrowerName'] = '<a href="/loan.html?borrowerId=' +
+	    														response.data[i]['borrower']['borrowerId'] +
+	    														'">' + response.data[i]['borrower']['borrowerName'] +
+	    														'</a>';
+	    		
+	    		var actionLink = 'No action possible (Default)';
+	    		if (response.data[i]['amount'] == 0 && response.data[i]['loanDateHindi'] == '-') {
+	    			actionLink = 'No action possible here';
+	    		} else {
+	    			actionLink = '<a href="/loan.html?borrowerId=' + 
+	    						response.data[i]['borrower']['borrowerId'] +
+	    						'&loanId=' +
+	    						response.data[i]['loanId'] +
+	    						'">Update loan entry</a>';
+	    		}
+	    		
+	    		response.data[i]['action'] = actionLink;
 	    	}
         $('#all-loan').DataTable( {
             "aaData" : response.data,
@@ -96,11 +101,32 @@
                 { "data": "interestRate" },
                 { "data": "interestAmount" },
                 { "data": "totalAmount" },
-                { "data" : "returnLoan"}
+                { "data" : "action"}
             ]
         } );
      }});
     } );
+    
+    function formatDate(unformatedDate) {
+    	
+    	if (unformatedDate == null) {
+    		return '-';    	
+    	}
+    
+    	var monthNames = [
+			  "January", "February", "March",
+			  "April", "May", "June", "July",
+			  "August", "September", "October",
+			  "November", "December"
+			];
+			
+		var date = new Date(unformatedDate);
+		var day = date.getDate();
+		var monthIndex = date.getMonth();
+		var year = date.getFullYear();
+		
+		return year + '-' + (monthIndex + 1) + '-' + day;
+    }
 </script>
 </body>
 </html>

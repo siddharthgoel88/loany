@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Issue Loan</title>
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="datatables/media/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="css/jquery/ui/1.11.4/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="css/application.css" />
+</head>
+<body>
+	<div class="container">
+		<div class="alert alert-success" role="alert" id="success-message" style="display:none">
+		    <strong>Voila!</strong> Loan issued successfully.
+		</div>
+		<div class="alert alert-danger" role="alert" id="failure-message" style="display:none">
+		    <strong>Oh no!</strong> Some problem occurred.
+		</div>
+		
+		<div class="card">
+		  <div class="card-block">
+		    <a href='/index.html'><h3 class="card-title">Go To Home</h3></a>
+		  </div>
+		</div>		
+		
+		<div id="issue-loan-div">
+			<h2 class="display-3" >Borrower's Details :</h2>
+			<h4 class="display-4" id="borrowerName"></h4>
+			<h4 class="display-4" id="fatherName"></h4>
+			<h4 class="display-4" id="place"></h4>
+			<h4 class="display-4" id="caste"></h4>
+			
+			<h2 class="display-4">Loan Details</h2>
+			<form id="issue-loan-form">
+			  <div class="row top-buffer">
+			  <div class="col-xs-3">
+			    <label for="borrowerName">(*) Amount (Rs.) : </label>
+			    <input type="text" class="form-control" id="amount" placeholder="Enter loan amount here">
+			  </div>
+			  <div class="col-xs-3">
+			    <label for="itemName">(*) Item Name : </label>
+			    <input type="text" class="form-control" id="itemName" placeholder="Enter item name here">
+			  </div>
+			  <div class="col-xs-3">
+			    <label for="itemWeight">(*) Item Weight : </label>
+			    <input type="text" class="form-control" id="itemWeight" placeholder="Enter item weight here">
+			  </div>
+			  </div>
+			  <div class="row top-buffer">
+			  <div class="col-xs-3">
+			    <label for="loanIssueDate">(*) Loan Issue Date : </label>
+			    <input type="text" class="form-control" id="loanIssueDate" placeholder="Click here and select the date">
+			  </div>
+			  <div class="col-xs-3">
+			    <label for="loanDateHindi">(*) Loan Date Hindi : </label>
+			    <input type="text" class="form-control" id="loanDateHindi" placeholder="Enter hindi date here">
+			  </div>
+			  <div class="col-xs-3">
+			    <label for="loanReturnDate">Loan Return Date : </label>
+			    <input type="text" class="form-control" id="loanReturnDate" placeholder="Click here and select the date">
+			  </div>
+			  </div>
+			  <div class="row top-buffer">
+			  <div class="col-xs-3">
+			    <label for="interestRate">Rate of Interest (%) : </label>
+			    <input type="text" class="form-control" id="interestRate" placeholder="Enter rate of interest here">
+			  </div>
+			  <div class="col-xs-3">
+			    <label for="interestAmount">Interest Amount (Rs.) : </label>
+			    <input type="text" class="form-control" id="interestAmount" placeholder="Interest Amount">
+			  </div>
+  			  <div class="col-xs-3">
+			    <label for="totalAmount">Total Amount (Rs.) : </label>
+			    <input type="text" class="form-control" id="totalAmount" placeholder="Total Amount">
+			  </div>
+			  </div>
+			  <div class="row top-buffer"><br>
+			  	<button type="button" class="btn btn-primary" id="calculateInterestBtn">Calculate Interest</button>
+			  	<button type="button" class="btn btn-primary" id="issueLoanBtn">Issue Loan</button>
+			  </div>
+			</form>
+		</div>
+	</div>
+	<script src="js/jquery/jquery-2.2.4.min.js"></script>
+	<script src="js/jquery/jquery-ui.min.js"></script>
+	<script src="js/bootstrap/js/bootstrap.min.js"></script>
+	<script src="datatables/media/js/jquery.dataTables.min.js" ></script>
+	<script src="js/issue-loan.js"></script>
+	<script type="text/javascript">
+       $(function () {
+           $('#loanIssueDate').datepicker();
+           $('#loanReturnDate').datepicker();
+       });
+     </script>
+</body>
+</html>

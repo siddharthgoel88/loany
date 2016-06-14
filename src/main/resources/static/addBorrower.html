@@ -11,8 +11,21 @@
 </head>
 <body>
 	<div class="container">
+		<div class="alert alert-success" role="alert" id="success-message" style="display:none">
+		    <strong>Voila!</strong> Borrower is successfully added.
+		</div>
+		<div class="alert alert-danger" role="alert" id="failure-message" style="display:none">
+		    <strong>Oh no!</strong> Some problem occurred.
+		</div>
+
+		<div class="card">
+		  <div class="card-block">
+		    <a href='/index.html'><h3 class="card-title">Go To Home</h3></a>
+		  </div>
+		</div>	
+		
 		<h1 class="display-4">Add Borrower</h1>
-		<form>
+		<form id="add-borrower-form">
 		  <div class="form-group">
 		    <label for="borrowerName">Borrower's Name</label>
 		    <input type="text" class="form-control" id="borrowerName" placeholder="Enter borrower's name here">
@@ -29,10 +42,11 @@
 		    <label for="place">Place</label>
 		    <input type="text" class="form-control" id="place" placeholder="Enter place here">
 		  </div>
-		  <button type="submit" class="btn btn-primary">Add Borrower</button>
+		  <button type="submit" class="btn btn-primary" id="add-borrower-btn" >Add Borrower</button>
 		</form>
 	</div>
 	<script src="js/jquery/jquery-2.2.4.min.js"></script>
+	<script src="js/add-borrower.js"></script>
 	<script src="js/jquery/jquery-ui.min.js"></script>
 	<script src="js/bootstrap/js/bootstrap.min.js"></script>
 	<script src="datatables/media/js/jquery.dataTables.min.js" ></script>

@@ -7,12 +7,19 @@ import io.sidd.loany.model.dao.LoanDao;
 import io.sidd.loany.rest.beans.LoanDataTable;
 import io.sidd.loany.rest.beans.Status;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,110 +35,136 @@ public class MainRestController {
 	@Autowired
 	public LoanDao loanDao;
 	
+	Logger log = LoggerFactory.getLogger(MainRestController.class.getName());
+	
 	@ResponseBody
 	@RequestMapping(path = "/createBorrower", method = RequestMethod.POST)
 	@Transactional
-	public Status addBorrower(@RequestBody Borrower borrower) {
+	public ResponseEntity<Status> addBorrower(@RequestBody Borrower borrower) {
 		try {
+			if (borrower.borrowerName.equals("") || borrower.caste.equals("")
+					|| borrower.fatherName.equals("") || borrower.place.equals("")) {
+				throw new Exception("Invalid input");
+			}
+			log.info("/createBorrower request came");
 			borrowerDao.create(borrower);
+			log.info("The new borrower's id is " + borrower.borrowerId);
+			createEmptyLoan(borrower.borrowerId);
 		} catch(Exception e) {
-			return failure(e.getMessage());
+			return new ResponseEntity<Status>(failure(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return success();
+		return new ResponseEntity<Status>(success(), HttpStatus.OK);
 	}
 	
+	private void createEmptyLoan(long borrowerId) throws Exception {
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		Date date = new Date();
+		long loanId = -1;
+		ResponseEntity<Status> response = saveLoan(0, "-", "-", dateFormat.format(date), "-", 
+				dateFormat.format(date), 0.0, 0.0 , 0.0,  borrowerId, loanId);
+		if(response.getStatusCode().is5xxServerError()) {
+			throw new Exception(response.getBody().errorMessage);
+		}
+	}
+
 	@ResponseBody
-	@RequestMapping(path = "/addLoan", method = RequestMethod.POST)
+	@RequestMapping(path = "/saveLoan", method = RequestMethod.POST)
 	@Transactional
-	public Status addLoan(double amount, String itemName,
+	public ResponseEntity<Status> saveLoan(double amount, String itemName,
 			String itemWeight, String loanIssueDate,
-			String loanDateHindi, long borrowerId) {
+			String loanDateHindi, String loanReturnDate,
+			double interestRate, double interestAmount,
+			double totalAmount, long borrowerId, long loanId) {
 		try {
+			
 			Borrower borrower = borrowerDao.get(borrowerId);
-			Loan loan = new Loan();
+			
+			Loan loan = null;
+			if (loanId == -1) {
+				loan = new Loan();
+			} else {
+				loan = loanDao.get(loanId);
+			}
+			
 			loan.amount = amount;
-			loan.borrower = borrower;
+			
+			if (loan.borrower == null) {
+				loan.borrower = borrower;
+			}
+			
 			loan.itemName = itemName;
 			loan.itemWeight = itemWeight;
 			loan.loanDateHindi = loanDateHindi;
-			loan.loanIssueDate = new SimpleDateFormat("dd/MM/yyyy")
-									.parse(loanIssueDate);
+			loan.loanIssueDate = new SimpleDateFormat("MM/dd/yyyy")
+				.parse(loanIssueDate);
+			loan.loanReturnDate = new SimpleDateFormat("MM/dd/yyyy")
+				.parse(loanReturnDate);
 			
-			loanDao.create(loan);
-			
-		} catch(Exception e) {
-			return failure(e.getMessage());
-		}
-		return success();
-	}
-	
-	@RequestMapping(path = "/returnLoan", method = RequestMethod.POST)
-	@Transactional
-	public Status returnLoan(long loanId, long borrowerId,
-			String loanReturnDate, double interestRate,
-			double interestAmount, double totalAmount) {
-		try {
-			Loan loan = loanDao.get(loanId);
-			
-			if (loan == null || loan.borrower.borrowerId != borrowerId) {
-				throw new Exception("Seems the form data to return loan is tampered.");
-			}
-			
-			loan.loanReturnDate = new SimpleDateFormat("dd/MM/yyyy")
-								.parse(loanReturnDate);
 			loan.interestRate = interestRate;
 			loan.interestAmount = interestAmount;
 			loan.totalAmount = totalAmount;
 			
-			loanDao.update(loan);
+			deleteEmptyLoan(loan.borrower);
 			
-		} catch(Exception e) {
-			return failure(e.getMessage());
-		}
-		return success();
-	}
-	
-	@RequestMapping(path = "/updateLoan", method = RequestMethod.POST)
-	@Transactional
-	public Status updateLoan(long loanId, long borrowerId,
-			double amount, String itemName, String itemWeight,
-			String loanDateHindi, String loanIssueDate,
-			String loanReturnDate, double interestRate,
-			double interestAmount, double totalAmount) {
-		try {
-			Loan loan = loanDao.get(loanId);
-			
-			if (loan == null || loan.borrower.borrowerId != borrowerId) {
-				throw new Exception("Seems the form data to update loan is tampered.");
+			if (loanId == -1) {
+				loanDao.create(loan);
+			} else {
+				loanDao.update(loan);
 			}
 			
-			loan.amount = amount;
-			loan.itemName = itemName;
-			loan.itemWeight = itemWeight;
-			loan.loanDateHindi = loanDateHindi;
-			loan.loanIssueDate = new SimpleDateFormat("dd/MM/yyyy")
-									.parse(loanIssueDate);
-			loan.loanReturnDate = new SimpleDateFormat("dd/MM/yyyy")
-									.parse(loanReturnDate);
-			loan.interestRate = interestRate;
-			loan.interestAmount = interestAmount;
-			loan.totalAmount = totalAmount;
-			
-			loanDao.update(loan);
-			
 		} catch(Exception e) {
-			return failure(e.getMessage());
+			return new ResponseEntity<Status>(failure(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return success();
+			return new ResponseEntity<Status>(success(), HttpStatus.OK);
 	}
+	
+	private void deleteEmptyLoan(Borrower borrower) {
+		Loan loan = loanDao.getEmptyLoan(borrower);
+		if (loan != null) {
+			loanDao.delete(loan);
+		}
+	}
+
+	@RequestMapping(value = "/getBorrower/{id}",  method=RequestMethod.GET)
+	@Transactional
+	public ResponseEntity<Borrower> getBorrower(@PathVariable long id) {
+		try {
+			Borrower borrower = borrowerDao.get(id);
+			if (borrower == null) {
+				throw new Exception("Invalid id");
+			}
+			return new ResponseEntity<Borrower>(borrower, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Borrower>(new Borrower(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@RequestMapping(value = "/getLoan/{id}",  method=RequestMethod.GET)
+	@Transactional
+	public ResponseEntity<Loan> getLoan(@PathVariable long id) {
+		try {
+			Loan loan = loanDao.get(id);
+			if (loan == null) {
+				throw new Exception("Invalid id");
+			}
+			return new ResponseEntity<Loan>(loan, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Loan>(new Loan(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	
 	@RequestMapping(path = "/getAllLoans")
 	@Transactional
-	public LoanDataTable getAllLoans() {
+	public ResponseEntity<LoanDataTable> getAllLoans() {
+		try {
 			List<Loan> allLoans = loanDao.getAll();
 			LoanDataTable loanDataTable = new LoanDataTable();
 			loanDataTable.data = allLoans;
-			return loanDataTable;
+			return new ResponseEntity<LoanDataTable>(loanDataTable, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<LoanDataTable>(new LoanDataTable(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	private Status failure(String errorMessage) {
