@@ -100,7 +100,7 @@ $(document).ready(function(){
     	rate = $('#interestRate').val();
 		
 		var amount = getAmount(principle, rate, startDate, endDate);
-		var interest = parseFloat(amount) + parseFloat(principle);
+		var interest = parseFloat(amount) - parseFloat(principle);
 		$('#interestAmount').val(interest);
 		$('#totalAmount').val(amount);
 	});
